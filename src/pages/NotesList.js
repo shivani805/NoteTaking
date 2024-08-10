@@ -34,7 +34,6 @@ const NotesList = props => {
     );
     setFilteredNotes([...a]);
   };
-  console.log(typeof notes[0].reminder, 'fkkf');
 
   const ListItem = ({item}) => {
     return (
@@ -69,7 +68,6 @@ const NotesList = props => {
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundColor}
       />
-      <Header title={'Notes'} />
       <SearchInput
         onChangeText={Onsearch}
         style={styles.searchInput}
@@ -88,6 +86,7 @@ const NotesList = props => {
           flexDirection: 'row',
           flexWrap: 'wrap',
           flex: 1,
+          justifyContent: 'space-between',
         }}
       />
     </SafeAreaView>
@@ -100,7 +99,7 @@ const styles = StyleSheet.create({
   box: {
     borderWidth: 0.3,
     padding: 10,
-    marginLeft: 23,
+    // marginLeft: 23,
     width: 133,
     marginTop: 24,
     borderRadius: 12,
@@ -126,7 +125,6 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   searchInput: {
-    marginHorizontal: 30,
     borderBottomWidth: 1,
   },
 });

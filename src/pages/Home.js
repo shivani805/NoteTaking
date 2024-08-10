@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import Header from '../components/Header';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
+import NotesList from './NotesList';
 
 const Home = props => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -28,16 +29,15 @@ const Home = props => {
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundColor}
       />
+
+      <Header />
+      <Pressable onPress={onClickAdd} style={{borderBottomWidth: 0.5}}>
+        <Text style={styles.row}>Add New +</Text>
+      </Pressable>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={{...styles.backgroundStyle, backgroundColor: backgroundColor}}>
-        <Header />
-        <Pressable onPress={onClickAdd} style={{borderBottomWidth: 0.5}}>
-          <Text style={styles.row}>Add Note +</Text>
-        </Pressable>
-        <Pressable onPress={onClickList} style={{borderBottomWidth: 0.5}}>
-          <Text style={styles.row}>Notes</Text>
-        </Pressable>
+        <NotesList {...props} />
       </ScrollView>
     </SafeAreaView>
   );

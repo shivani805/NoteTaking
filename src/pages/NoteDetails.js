@@ -19,21 +19,25 @@ import Header from '../components/Header';
 import CustomButton from '../components/CustomButtom';
 import {useDispatch, useSelector} from 'react-redux';
 import deleteImg from '../images/trash-can-bin.png';
+import editImg from '../images/edit-text.png';
 import {addNotes, deleteNote} from '../reducers/reduxSlice';
 
 const NoteDetails = props => {
   const {notes} = useSelector(state => state.persistReducer.reduxSlice);
+  const item = notes.find(item => item.id === props.route.params.id);
   const dispatch = useDispatch();
   const isDarkMode = useColorScheme() === 'dark';
   const backgroundColor = isDarkMode ? Colors.darker : Colors.lighter;
-  const item = notes.find(item => item.id === props.route.params.id);
-  console.log(props.route.params.id, notes);
+  console.log(props.route.params.id, item);
 
   const onDelete = () => {
     dispatch(
       deleteNote(notes.filter(item => item.id !== props.route.params.id)),
     );
-    return props.navigation.push('NoteList');
+    return props.navigation.push('Home');
+  };
+  const onEdit = () => {
+    props.navigation.push('AddNote', {id: props.route.params.id});
   };
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -49,9 +53,19 @@ const NoteDetails = props => {
           backgroundColor: backgroundColor,
         }}
         contentContainerStyle={{flex: 1}}>
-        <Pressable onPress={onDelete}>
-          <Image source={deleteImg} style={styles.deleteLogo} />
-        </Pressable>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+            marginBottom: 20,
+          }}>
+          <Pressable onPress={onDelete}>
+            <Image source={deleteImg} style={styles.deleteLogo} />
+          </Pressable>
+          <Pressable onPress={onEdit}>
+            <Image source={editImg} style={styles.deleteLogo} />
+          </Pressable>
+        </View>
         <Text style={styles.title}>{item?.title}</Text>
         <Text style={styles.desc}>{item?.description}</Text>
         <Text style={styles.date}>
@@ -93,5 +107,6 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     width: 20,
     height: 24,
+    marginRight: 20,
   },
 });

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Pressable,
   ScrollView,
@@ -8,33 +8,38 @@ import {
   TextInput,
   ToastAndroid,
   useColorScheme,
+  View,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import Header from '../components/Header';
 import CustomButton from '../components/CustomButtom';
-import {useDispatch} from 'react-redux';
-import {addNotes} from '../reducers/reduxSlice';
+import {useDispatch, useSelector} from 'react-redux';
+import {addNotes, editNote} from '../reducers/reduxSlice';
 import PushNotification, {Importance} from 'react-native-push-notification';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 
-const AddNote = () => {
+const AddNote = props => {
+  const editId = props.route.params?.id;
   const [title, setTitle] = useState();
   const [desc, setdesc] = useState();
   const dispatch = useDispatch();
   const isDarkMode = useColorScheme() === 'dark';
   const backgroundColor = isDarkMode ? Colors.darker : Colors.lighter;
+  const {notes} = useSelector(state => state.persistReducer.reduxSlice);
   const [loading, setLoading] = useState(false);
   const [openCalender, setOpenCalender] = useState(false);
   const [date, setDate] = useState(new Date());
+
   const onButtonClick = () => {
     setLoading(true);
+    const uniqueId = Math.random().toString(16).slice(2);
     dispatch(
       addNotes({
         title,
         description: desc,
         created: new Date().toLocaleDateString(),
-        id: Date.now(),
+        id: uniqueId,
         reminder: date,
       }),
     );
@@ -43,7 +48,9 @@ const AddNote = () => {
       date: date, // in 60 secs
       allowWhileIdle: false, // (optional) set notification to work while on doze, default: false
       channelId: 'channel-id-note',
-      /* Android Only Properties */
+      data: {
+        messageId: uniqueId,
+      },
       repeatTime: 1, // (optional) Increment of configured repeatType. Check 'Repeating Notifications' section for more info.
     });
     setLoading(false);
@@ -52,6 +59,39 @@ const AddNote = () => {
     setDate(new Date());
     ToastAndroid.showWithGravity(
       'Added successfully....',
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER,
+    );
+  };
+
+  const onUpdate = () => {
+    setLoading(true);
+    dispatch(
+      editNote({
+        title,
+        description: desc,
+        reminder: date,
+        id: editId,
+      }),
+    );
+    PushNotification.localNotificationSchedule({
+      message: title, // (required)
+      date: date, // in 60 secs
+      allowWhileIdle: false, // (optional) set notification to work while on doze, default: false
+      channelId: 'channel-id-note',
+      data: {
+        messageId: editId,
+      },
+      /* Android Only Properties */
+      repeatTime: 2, // (optional) Increment of configured repeatType. Check 'Repeating Notifications' section for more info.
+    });
+
+    setLoading(false);
+    setTitle('');
+    setdesc('');
+    setDate(new Date());
+    ToastAndroid.showWithGravity(
+      'updated successfully....',
       ToastAndroid.SHORT,
       ToastAndroid.CENTER,
     );
@@ -86,6 +126,15 @@ const AddNote = () => {
     );
   }
 
+  useEffect(() => {
+    if (editId) {
+      const item = notes.find(item => item.id === editId);
+      setTitle(item.title);
+      setdesc(item.description);
+      setDate(new Date(item.reminder));
+    }
+  }, [editId]);
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <StatusBar
@@ -106,13 +155,14 @@ const AddNote = () => {
         contentInsetAdjustmentBehavior="automatic"
         style={{...styles.backgroundStyle, backgroundColor: backgroundColor}}>
         <Header title={'Add New'} />
-        <Text style={styles.headerText}>Add New</Text>
-        <TextInput
-          value={title}
-          placeholder="Add Title....."
-          style={styles.inputStyle}
-          onChangeText={setTitle}
-        />
+        <View style={{marginTop: 30}}>
+          <TextInput
+            value={title}
+            placeholder="Add Title....."
+            style={styles.inputStyle}
+            onChangeText={setTitle}
+          />
+        </View>
         <TextInput
           numberOfLines={5}
           value={desc}
@@ -133,7 +183,7 @@ const AddNote = () => {
         <CustomButton
           title={'Add'}
           disabled={!title || !desc}
-          onButtonClick={onButtonClick}
+          onButtonClick={!editId ? onButtonClick : onUpdate}
         />
       </ScrollView>
     </SafeAreaView>

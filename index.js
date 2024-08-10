@@ -18,30 +18,6 @@ import {useEffect} from 'react';
 
 const MainApp = props => {
   useEffect(() => {
-    PushNotification.configure({
-      onRegister: function (token) {
-        console.log('TOKEN:', token);
-      },
-      // (required) Called when a remote is received or opened, or local notification is opened
-      onNotification: function (notification) {
-        console.log('NOTIFICATION:', notification);
-
-        // (required) Called when a remote is received or opened, or local notification is opened
-        notification.finish(PushNotification.FetchResult?.NoData);
-      },
-      // (optional) Called when Registered Action is pressed and invokeApp is false, if true onNotification will be called (Android)
-      onAction: function (notification) {
-        console.log('ACTION:', notification.action);
-        console.log('NOTIFICATION:', notification);
-      },
-      // (optional) Called when the user fails to register for remote notifications. Typically occurs when APNS is having issues, or the device is a simulator. (iOS)
-      onRegistrationError: function (err) {
-        console.error(err.message, err);
-      },
-      popInitialNotification: true,
-      requestPermissions: false,
-    });
-
     PushNotification.createChannel(
       {
         channelId: 'channel-id-note', // (required)
