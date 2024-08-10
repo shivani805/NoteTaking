@@ -54,7 +54,10 @@ const NoteDetails = props => {
         </Pressable>
         <Text style={styles.title}>{item?.title}</Text>
         <Text style={styles.desc}>{item?.description}</Text>
-        <Text style={styles.date}>created : {item?.date}</Text>
+        <Text style={styles.date}>
+          Reminder : {new Date(item?.reminder).toLocaleTimeString()}
+        </Text>
+        <Text style={styles.date}>created : {item?.created}</Text>
       </ScrollView>
     </SafeAreaView>
   );

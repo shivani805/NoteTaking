@@ -1,7 +1,6 @@
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {
-  ActivityIndicator,
-  Button,
+  Pressable,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -9,7 +8,6 @@ import {
   TextInput,
   ToastAndroid,
   useColorScheme,
-  View,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
@@ -17,6 +15,8 @@ import Header from '../components/Header';
 import CustomButton from '../components/CustomButtom';
 import {useDispatch} from 'react-redux';
 import {addNotes} from '../reducers/reduxSlice';
+import PushNotification, {Importance} from 'react-native-push-notification';
+import RNDateTimePicker from '@react-native-community/datetimepicker';
 
 const AddNote = () => {
   const [title, setTitle] = useState();
@@ -25,31 +25,83 @@ const AddNote = () => {
   const isDarkMode = useColorScheme() === 'dark';
   const backgroundColor = isDarkMode ? Colors.darker : Colors.lighter;
   const [loading, setLoading] = useState(false);
+  const [openCalender, setOpenCalender] = useState(false);
+  const [date, setDate] = useState(new Date());
   const onButtonClick = () => {
     setLoading(true);
     dispatch(
       addNotes({
         title,
         description: desc,
-        date: new Date().toLocaleDateString(),
+        created: new Date().toLocaleDateString(),
         id: Date.now(),
+        reminder: date,
       }),
     );
+    PushNotification.localNotificationSchedule({
+      message: title, // (required)
+      date: date, // in 60 secs
+      allowWhileIdle: false, // (optional) set notification to work while on doze, default: false
+      channelId: 'channel-id-note',
+      /* Android Only Properties */
+      repeatTime: 1, // (optional) Increment of configured repeatType. Check 'Repeating Notifications' section for more info.
+    });
+    setLoading(false);
     setTitle('');
     setdesc('');
+    setDate(new Date());
     ToastAndroid.showWithGravity(
       'Added successfully....',
       ToastAndroid.SHORT,
       ToastAndroid.CENTER,
     );
-    setLoading(false);
   };
+
+  const onChange = (event, date) => {
+    const {
+      type,
+      nativeEvent: {timestamp, utcOffset},
+    } = event;
+    console.log(event, date);
+    setDate(date);
+    setOpenCalender(false);
+  };
+
+  function unixTime(time) {
+    var u = new Date(time);
+    return (
+      time?.getFullYear() +
+      '-' +
+      ('0' + (time?.getMonth() + 1)).slice(-2) +
+      '-' +
+      ('0' + time?.getDate()).slice(-2) +
+      ' ' +
+      ('0' + time?.getHours()).slice(-2) +
+      ':' +
+      ('0' + time?.getMinutes()).slice(-2) +
+      ':' +
+      ('0' + time?.getSeconds()).slice(-2) +
+      '.' +
+      (time?.getMilliseconds() / 1000).toFixed(3).slice(2, 5)
+    );
+  }
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundColor}
       />
+      {openCalender && (
+        <RNDateTimePicker
+          mode="time"
+          value={date}
+          onChange={onChange}
+          // timeZoneOffsetInSeconds={3600}
+          // imeZoneOffsetInMinutes={60}
+          // dateFormat="dayofweek day month"
+        />
+      )}
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={{...styles.backgroundStyle, backgroundColor: backgroundColor}}>
@@ -69,6 +121,15 @@ const AddNote = () => {
           onChangeText={setdesc}
           multiline
         />
+        <Pressable onPress={() => setOpenCalender(true)}>
+          <TextInput
+            value={unixTime(date).toString()}
+            placeholder="Set Reminder"
+            style={styles.inputStyle}
+            readOnly
+            inputMode="number"
+          />
+        </Pressable>
         <CustomButton
           title={'Add'}
           disabled={!title || !desc}

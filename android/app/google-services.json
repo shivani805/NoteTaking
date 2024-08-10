@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "768154340780",
+    "project_id": "native-notification-e40e7",
+    "storage_bucket": "native-notification-e40e7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:768154340780:android:f07460147b6a42cf2afe09",
+        "android_client_info": {
+          "package_name": "com.notetaking"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQ5alFLyIMXCfmXiLV5Dw6_DXxkQBLH7w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

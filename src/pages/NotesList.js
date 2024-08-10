@@ -14,9 +14,10 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {useSelector} from 'react-redux';
 import Header from '../components/Header';
 import imggo from '../images/chevron.png';
-import {SearchBar} from 'react-native-screens';
-import SearchInput, {createFilter} from 'react-native-search-filter';
+import SearchInput from 'react-native-search-filter';
+
 import {useState} from 'react';
+
 const NotesList = props => {
   const {notes} = useSelector(state => state.persistReducer.reduxSlice);
   const isDarkMode = useColorScheme() === 'dark';
@@ -33,6 +34,7 @@ const NotesList = props => {
     );
     setFilteredNotes([...a]);
   };
+  console.log(typeof notes[0].reminder, 'fkkf');
 
   const ListItem = ({item}) => {
     return (
@@ -54,7 +56,9 @@ const NotesList = props => {
         <Text style={styles.description} numberOfLines={2}>
           {item.description}
         </Text>
-        <Text style={styles.timestamp}>{item.date}</Text>
+        <Text style={styles.timestamp}>
+          {new Date(item?.reminder).toLocaleTimeString()}
+        </Text>
       </TouchableOpacity>
     );
   };

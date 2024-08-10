@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
+  Alert,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -22,9 +23,31 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import AddNote from './src/pages/AddNote';
 import NotesList from './src/pages/NotesList';
 import NoteDetails from './src/pages/NoteDetails';
+import messaging from '@react-native-firebase/messaging';
+import {requestPermission} from './src/utils';
+import PushNotification, {Importance} from 'react-native-push-notification';
 
 function App() {
   const Stack = createNativeStackNavigator();
+
+  // const getDeviceToken = async () => {
+  //   const token = await messaging().getToken();
+  //   console.log(token, 'tokeen');
+  // };
+
+  // useEffect(() => {
+  //   requestPermission();
+  //   getDeviceToken();
+  // }, []);
+
+  // foreground
+  // useEffect(() => {
+  //   const unsubscribe = messaging().onMessage(async remoteMessage => {
+  //     Alert.alert('j;nklhni;kl', JSON.stringify(remoteMessage));
+  //   });
+  //   return unsubscribe;
+  // }, []);
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
