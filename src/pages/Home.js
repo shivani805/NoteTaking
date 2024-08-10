@@ -10,33 +10,39 @@ import {
 import Header from '../components/Header';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import NotesList from './NotesList';
+import {useFocusEffect, useTheme} from '@react-navigation/native';
+import React from 'react';
 
 const Home = props => {
   const isDarkMode = useColorScheme() === 'dark';
   const backgroundColor = isDarkMode ? Colors.darker : Colors.lighter;
-
+  const {colors} = useTheme();
   const onClickAdd = () => {
     props.navigation.push('AddNote');
   };
 
-  const onClickList = () => {
-    props.navigation.push('NoteList');
-  };
-
+  useFocusEffect(
+    React.useCallback(() => {
+      StatusBar.setBarStyle('dark-content');
+      StatusBar.setBackgroundColor(colors.background);
+    }, []),
+  );
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundColor}
-      />
+    <SafeAreaView style={{flex: 1, marginBottom: 30}}>
+      <StatusBar barStyle={isDarkMode ? Colors.darker : Colors.lighter} />
 
       <Header />
-      <Pressable onPress={onClickAdd} style={{borderBottomWidth: 0.5}}>
-        <Text style={styles.row}>Add New +</Text>
+      <Pressable
+        onPress={onClickAdd}
+        style={{
+          borderBottomWidth: 0.5,
+          borderColor: isDarkMode ? 'white' : 'grey',
+        }}>
+        <Text style={{...styles.row, color: colors.text}}>Add New +</Text>
       </Pressable>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        style={{...styles.backgroundStyle, backgroundColor: backgroundColor}}>
+        style={{...styles.backgroundStyle}}>
         <NotesList {...props} />
       </ScrollView>
     </SafeAreaView>

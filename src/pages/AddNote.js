@@ -18,6 +18,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {addNotes, editNote} from '../reducers/reduxSlice';
 import PushNotification, {Importance} from 'react-native-push-notification';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
+import {useTheme} from '@react-navigation/native';
 
 const AddNote = props => {
   const editId = props.route.params?.id;
@@ -30,6 +31,7 @@ const AddNote = props => {
   const [loading, setLoading] = useState(false);
   const [openCalender, setOpenCalender] = useState(false);
   const [date, setDate] = useState(new Date());
+  const {colors} = useTheme();
 
   const onButtonClick = () => {
     setLoading(true);
@@ -137,10 +139,7 @@ const AddNote = props => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundColor}
-      />
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       {openCalender && (
         <RNDateTimePicker
           mode="time"
@@ -153,13 +152,13 @@ const AddNote = props => {
       )}
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        style={{...styles.backgroundStyle, backgroundColor: backgroundColor}}>
+        style={{...styles.backgroundStyle}}>
         <Header title={'Add New'} />
         <View style={{marginTop: 30}}>
           <TextInput
             value={title}
             placeholder="Add Title....."
-            style={styles.inputStyle}
+            style={{...styles.inputStyle, borderColor: colors.text}}
             onChangeText={setTitle}
           />
         </View>
@@ -167,7 +166,7 @@ const AddNote = props => {
           numberOfLines={5}
           value={desc}
           placeholder="Add Description....."
-          style={styles.inputStyle}
+          style={{...styles.inputStyle, borderColor: colors.text}}
           onChangeText={setdesc}
           multiline
         />
@@ -175,7 +174,7 @@ const AddNote = props => {
           <TextInput
             value={unixTime(date).toString()}
             placeholder="Set Reminder"
-            style={styles.inputStyle}
+            style={{...styles.inputStyle, borderColor: colors.text}}
             readOnly
             inputMode="number"
           />

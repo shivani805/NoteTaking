@@ -17,6 +17,7 @@ import imggo from '../images/chevron.png';
 import SearchInput from 'react-native-search-filter';
 
 import {useState} from 'react';
+import {useTheme} from '@react-navigation/native';
 
 const NotesList = props => {
   const {notes} = useSelector(state => state.persistReducer.reduxSlice);
@@ -24,7 +25,7 @@ const NotesList = props => {
   const backgroundColor = isDarkMode ? Colors.darker : Colors.lighter;
   const [filteredNotes, setFilteredNotes] = useState(notes);
   const [searchText, setSearchText] = useState('');
-
+  const {colors} = useTheme();
   const Onsearch = text => {
     setSearchText(text);
     const a = notes.filter(
@@ -39,7 +40,7 @@ const NotesList = props => {
     return (
       <TouchableOpacity
         onPress={() => props.navigation.push('NoteDetails', {id: item.id})}
-        style={styles.box}
+        style={{...styles.box, borderColor: isDarkMode ? 'white' : 'grey'}}
         key={item.id}>
         <View
           style={{
@@ -47,7 +48,7 @@ const NotesList = props => {
             flexWrap: 'nowrap',
             justifyContent: 'space-between',
           }}>
-          <Text style={styles.title} numberOfLines={1}>
+          <Text style={{...styles.title, color: colors.text}} numberOfLines={1}>
             {item.title}
           </Text>
           <Image source={imggo} />
@@ -64,13 +65,14 @@ const NotesList = props => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundColor}
-      />
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <SearchInput
         onChangeText={Onsearch}
-        style={styles.searchInput}
+        style={{
+          ...styles.searchInput,
+          borderColor: isDarkMode ? 'white' : 'grey',
+          color: colors.text,
+        }}
         placeholder="search by keyword"
         caseSensitive={false}
       />

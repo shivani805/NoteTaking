@@ -21,6 +21,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import deleteImg from '../images/trash-can-bin.png';
 import editImg from '../images/edit-text.png';
 import {addNotes, deleteNote} from '../reducers/reduxSlice';
+import {useTheme} from '@react-navigation/native';
 
 const NoteDetails = props => {
   const {notes} = useSelector(state => state.persistReducer.reduxSlice);
@@ -29,7 +30,7 @@ const NoteDetails = props => {
   const isDarkMode = useColorScheme() === 'dark';
   const backgroundColor = isDarkMode ? Colors.darker : Colors.lighter;
   console.log(props.route.params.id, item);
-
+  const {colors} = useTheme();
   const onDelete = () => {
     dispatch(
       deleteNote(notes.filter(item => item.id !== props.route.params.id)),
@@ -41,16 +42,12 @@ const NoteDetails = props => {
   };
   return (
     <SafeAreaView style={{flex: 1}}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundColor}
-      />
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <Header title={'Notes'} />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={{
           ...styles.backgroundStyle,
-          backgroundColor: backgroundColor,
         }}
         contentContainerStyle={{flex: 1}}>
         <View
@@ -66,12 +63,16 @@ const NoteDetails = props => {
             <Image source={editImg} style={styles.deleteLogo} />
           </Pressable>
         </View>
-        <Text style={styles.title}>{item?.title}</Text>
-        <Text style={styles.desc}>{item?.description}</Text>
-        <Text style={styles.date}>
+        <Text style={{...styles.title, color: colors.text}}>{item?.title}</Text>
+        <Text style={{...styles.desc, color: colors.text}}>
+          {item?.description}
+        </Text>
+        <Text style={{...styles.date, color: colors.notification}}>
           Reminder : {new Date(item?.reminder).toLocaleTimeString()}
         </Text>
-        <Text style={styles.date}>created : {item?.created}</Text>
+        <Text style={{...styles.date, color: colors.text}}>
+          created : {item?.created}
+        </Text>
       </ScrollView>
     </SafeAreaView>
   );

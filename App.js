@@ -18,7 +18,11 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import Header from './src/components/Header';
 import Home from './src/pages/Home';
-import {NavigationContainer, useNavigation} from '@react-navigation/native';
+import {
+  NavigationContainer,
+  DefaultTheme,
+  DarkTheme,
+} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import AddNote from './src/pages/AddNote';
 import NotesList from './src/pages/NotesList';
@@ -31,7 +35,8 @@ import {openAppFromNotification} from './src/reducers/reduxSlice';
 
 function App() {
   const Stack = createNativeStackNavigator();
-
+  const scheme = useColorScheme();
+  const MyTheme = scheme === 'dark' ? DarkTheme : DefaultTheme;
   const dispatch = useDispatch();
 
   const navigationRef = useRef();
@@ -90,7 +95,7 @@ function App() {
   // }, []);
 
   return (
-    <NavigationContainer ref={navigationRef} linking={linking}>
+    <NavigationContainer ref={navigationRef} linking={linking} theme={MyTheme}>
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen
           name="Home"
