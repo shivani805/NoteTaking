@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
+  Image,
   Pressable,
   ScrollView,
   StatusBar,
@@ -19,14 +20,13 @@ import {addNotes, editNote} from '../reducers/reduxSlice';
 import PushNotification, {Importance} from 'react-native-push-notification';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import {useTheme} from '@react-navigation/native';
-
+import clock from '../images/clock.png';
 const AddNote = props => {
   const editId = props.route.params?.id;
   const [title, setTitle] = useState();
   const [desc, setdesc] = useState();
   const dispatch = useDispatch();
   const isDarkMode = useColorScheme() === 'dark';
-  const backgroundColor = isDarkMode ? Colors.darker : Colors.lighter;
   const {notes} = useSelector(state => state.persistReducer.reduxSlice);
   const [loading, setLoading] = useState(false);
   const [openCalender, setOpenCalender] = useState(false);
@@ -153,7 +153,7 @@ const AddNote = props => {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={{...styles.backgroundStyle}}>
-        <Header title={'Add New'} />
+        <Header title={!editId ? 'Add New' : 'Edit'} />
         <View style={{marginTop: 30}}>
           <TextInput
             value={title}
@@ -170,15 +170,24 @@ const AddNote = props => {
           onChangeText={setdesc}
           multiline
         />
-        <Pressable onPress={() => setOpenCalender(true)}>
-          <TextInput
-            value={unixTime(date).toString()}
-            placeholder="Set Reminder"
-            style={{...styles.inputStyle, borderColor: colors.text}}
-            readOnly
-            inputMode="number"
-          />
-        </Pressable>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 40,
+          }}>
+          <Text style={{color: colors.text}}>{unixTime(date).toString()}</Text>
+          <Pressable onPress={() => setOpenCalender(true)}>
+            <Image
+              source={clock}
+              style={{textAlign: 'right', marginLeft: 'auto'}}
+            />
+            <Text style={{textDecorationLine: 'underline', marginTop: 5}}>
+              set reminder
+            </Text>
+          </Pressable>
+        </View>
         <CustomButton
           title={'Add'}
           disabled={!title || !desc}

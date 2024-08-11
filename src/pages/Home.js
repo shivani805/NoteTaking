@@ -1,3 +1,4 @@
+import React, {useEffect, useState} from 'react';
 import {
   Pressable,
   SafeAreaView,
@@ -11,12 +12,13 @@ import Header from '../components/Header';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import NotesList from './NotesList';
 import {useFocusEffect, useTheme} from '@react-navigation/native';
-import React from 'react';
+import netinfo from '@react-native-community/netinfo';
 
 const Home = props => {
   const isDarkMode = useColorScheme() === 'dark';
-  const backgroundColor = isDarkMode ? Colors.darker : Colors.lighter;
   const {colors} = useTheme();
+  const [isConnected, setIsConnected] = useState(false);
+
   const onClickAdd = () => {
     props.navigation.push('AddNote');
   };
@@ -27,6 +29,16 @@ const Home = props => {
       StatusBar.setBackgroundColor(colors.background);
     }, []),
   );
+
+  useEffect(() => {
+    const unsubscribe = netinfo.addEventListener(state => {
+      setIsConnected(state.isConnected);
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   return (
     <SafeAreaView style={{flex: 1, marginBottom: 30}}>
       <StatusBar barStyle={isDarkMode ? Colors.darker : Colors.lighter} />
@@ -41,9 +53,10 @@ const Home = props => {
         <Text style={{...styles.row, color: colors.text}}>Add New +</Text>
       </Pressable>
       <ScrollView
+        showsVerticalScrollIndicator={false}
         contentInsetAdjustmentBehavior="automatic"
         style={{...styles.backgroundStyle}}>
-        <NotesList {...props} />
+        <NotesList {...props} isConnected={isConnected} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -60,6 +73,6 @@ const styles = StyleSheet.create({
   },
   backgroundStyle: {
     flex: 1,
-    marginHorizontal: 30,
+    paddingHorizontal: 20,
   },
 });

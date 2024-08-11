@@ -13,19 +13,19 @@ import {
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {useSelector} from 'react-redux';
 import Header from '../components/Header';
-import imggo from '../images/chevron.png';
+import imggo from '../images/share.png';
 import SearchInput from 'react-native-search-filter';
 
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useTheme} from '@react-navigation/native';
 
 const NotesList = props => {
-  const {notes} = useSelector(state => state.persistReducer.reduxSlice);
   const isDarkMode = useColorScheme() === 'dark';
-  const backgroundColor = isDarkMode ? Colors.darker : Colors.lighter;
+  const {notes} = useSelector(state => state.persistReducer.reduxSlice);
   const [filteredNotes, setFilteredNotes] = useState(notes);
   const [searchText, setSearchText] = useState('');
   const {colors} = useTheme();
+
   const Onsearch = text => {
     setSearchText(text);
     const a = notes.filter(
@@ -36,7 +36,11 @@ const NotesList = props => {
     setFilteredNotes([...a]);
   };
 
-  const ListItem = ({item}) => {
+  useEffect(() => {
+    setFilteredNotes(notes);
+  }, [notes.length]);
+
+  const ListItem = ({item, id}) => {
     return (
       <TouchableOpacity
         onPress={() => props.navigation.push('NoteDetails', {id: item.id})}
@@ -48,7 +52,10 @@ const NotesList = props => {
             flexWrap: 'nowrap',
             justifyContent: 'space-between',
           }}>
-          <Text style={{...styles.title, color: colors.text}} numberOfLines={1}>
+          <Text
+            style={{...styles.title, color: colors.text, maxWidth: 100}}
+            numberOfLines={1}
+            ellipsizeMode="tail">
             {item.title}
           </Text>
           <Image source={imggo} />
@@ -80,10 +87,12 @@ const NotesList = props => {
       <FlatList
         data={filteredNotes && filteredNotes.length > 0 ? filteredNotes : []}
         keyExtractor={item => `item-${item.id}`}
-        renderItem={({item}) => <ListItem item={item} />}
+        renderItem={({item}, id) => <ListItem item={item} id={id} />}
         ListEmptyComponent={<Text style={{margin: 30}}>No Notes added...</Text>}
         horizontal
         showsHorizontalScrollIndicator={false}
+        refreshing
+        // extraData={props.isConnected}
         contentContainerStyle={{
           flexDirection: 'row',
           flexWrap: 'wrap',
@@ -101,7 +110,6 @@ const styles = StyleSheet.create({
   box: {
     borderWidth: 0.3,
     padding: 10,
-    // marginLeft: 23,
     width: 133,
     marginTop: 24,
     borderRadius: 12,

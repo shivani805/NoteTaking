@@ -17,7 +17,6 @@ export const reduxSlice = createSlice({
       return state;
     },
     editNote: (state, action) => {
-      console.log(action.payload, 'ssks');
       const index = state.notes.findIndex(sta => sta.id === action.payload.id);
       state.notes[index].title = action.payload.title;
       state.notes[index].description = action.payload.description;

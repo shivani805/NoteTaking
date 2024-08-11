@@ -18,8 +18,8 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import Header from '../components/Header';
 import CustomButton from '../components/CustomButtom';
 import {useDispatch, useSelector} from 'react-redux';
-import deleteImg from '../images/trash-can-bin.png';
-import editImg from '../images/edit-text.png';
+import deleteImg from '../images/delete.png';
+import editImg from '../images/edit.png';
 import {addNotes, deleteNote} from '../reducers/reduxSlice';
 import {useTheme} from '@react-navigation/native';
 
@@ -28,8 +28,6 @@ const NoteDetails = props => {
   const item = notes.find(item => item.id === props.route.params.id);
   const dispatch = useDispatch();
   const isDarkMode = useColorScheme() === 'dark';
-  const backgroundColor = isDarkMode ? Colors.darker : Colors.lighter;
-  console.log(props.route.params.id, item);
   const {colors} = useTheme();
   const onDelete = () => {
     dispatch(
@@ -52,15 +50,14 @@ const NoteDetails = props => {
         contentContainerStyle={{flex: 1}}>
         <View
           style={{
-            flexDirection: 'row',
             justifyContent: 'flex-end',
             marginBottom: 20,
           }}>
-          <Pressable onPress={onDelete}>
-            <Image source={deleteImg} style={styles.deleteLogo} />
-          </Pressable>
           <Pressable onPress={onEdit}>
             <Image source={editImg} style={styles.deleteLogo} />
+          </Pressable>
+          <Pressable onPress={onDelete} style={{marginTop: 10}}>
+            <Image source={deleteImg} style={styles.deleteLogo} />
           </Pressable>
         </View>
         <Text style={{...styles.title, color: colors.text}}>{item?.title}</Text>
@@ -106,8 +103,6 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     alignItems: 'flex-end',
     alignSelf: 'flex-end',
-    width: 20,
     height: 24,
-    marginRight: 20,
   },
 });
