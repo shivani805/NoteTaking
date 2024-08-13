@@ -9,25 +9,28 @@ import {
   View,
   Image,
   FlatList,
+  Pressable,
 } from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {useSelector} from 'react-redux';
 import Header from '../components/Header';
 import imggo from '../images/share.png';
 import SearchInput from 'react-native-search-filter';
-
+import calendar from '../images/calendar1.png';
 import {useEffect, useState} from 'react';
 import {useTheme} from '@react-navigation/native';
+import RNDateTimePicker from '@react-native-community/datetimepicker';
+import {Dropdown} from 'react-native-element-dropdown';
 
 const NotesList = props => {
   const isDarkMode = useColorScheme() === 'dark';
   const {notes} = useSelector(state => state.persistReducer.reduxSlice);
   const [filteredNotes, setFilteredNotes] = useState(notes);
-  const [searchText, setSearchText] = useState('');
+  const [openCalender, setOpenCalender] = useState(false);
   const {colors} = useTheme();
-
+  const [date, setDate] = useState(new Date());
+  const [value, setValue] = useState('Keyword');
   const Onsearch = text => {
-    setSearchText(text);
     const a = notes.filter(
       note =>
         note.title.toLowerCase().includes(text.toLowerCase()) ||
@@ -36,9 +39,29 @@ const NotesList = props => {
     setFilteredNotes([...a]);
   };
 
+  const onClickFilter = () => {
+    setOpenCalender(!openCalender);
+  };
+
   useEffect(() => {
     setFilteredNotes(notes);
   }, [notes.length]);
+
+  const onChangeDate = (event, date) => {
+    const a = notes.filter(
+      note =>
+        new Date(note.reminder).toLocaleDateString() ===
+        new Date(date).toLocaleDateString(),
+    );
+    setOpenCalender(false);
+    setDate(date);
+    setFilteredNotes([...a]);
+  };
+
+  const data = [
+    {label: 'Date', value: 'Date'},
+    {label: 'Keyword', value: 'Keyword'},
+  ];
 
   const ListItem = ({item, id}) => {
     return (
@@ -73,16 +96,57 @@ const NotesList = props => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <SearchInput
-        onChangeText={Onsearch}
+
+      <View
         style={{
-          ...styles.searchInput,
-          borderColor: isDarkMode ? 'white' : 'grey',
-          color: colors.text,
-        }}
-        placeholder="search by keyword"
-        caseSensitive={false}
-      />
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
+        {value === 'Keyword' && (
+          <SearchInput
+            onChangeText={Onsearch}
+            style={{
+              ...styles.searchInput,
+              borderColor: isDarkMode ? 'white' : 'grey',
+              color: colors.text,
+            }}
+            placeholder={`search by ${value}`}
+            caseSensitive={false}
+          />
+        )}
+        {value === 'Date' && (
+          <Pressable
+            onPress={() => onClickFilter()}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <Image source={calendar} />
+            <Text style={{marginLeft: 5}}>
+              {!date ? 'dd/mm/yyyy' : new Date(date).toLocaleDateString()}
+            </Text>
+          </Pressable>
+        )}
+        {openCalender && value === 'Date' && (
+          <RNDateTimePicker mode="date" value={date} onChange={onChangeDate} />
+        )}
+        <Dropdown
+          style={[styles.dropdown]}
+          selectedTextStyle={styles.selectedTextStyle}
+          inputSearchStyle={styles.inputSearchStyle}
+          itemTextStyle={styles.itemTextStyle}
+          data={data}
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={'Search by'}
+          value={value}
+          onChange={item => {
+            setValue(item.value);
+          }}
+        />
+      </View>
 
       <FlatList
         data={filteredNotes && filteredNotes.length > 0 ? filteredNotes : []}
@@ -136,5 +200,23 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     borderBottomWidth: 1,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 18,
+  },
+  dropdown: {
+    height: 50,
+    borderColor: 'gray',
+    borderWidth: 0.5,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    width: 122,
+  },
+  itemTextStyle: {
+    color: 'black',
   },
 });

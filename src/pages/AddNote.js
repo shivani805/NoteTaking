@@ -20,6 +20,7 @@ import {addNotes, editNote} from '../reducers/reduxSlice';
 import PushNotification, {Importance} from 'react-native-push-notification';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import {useTheme} from '@react-navigation/native';
+import DatePicker from 'react-native-date-picker';
 import clock from '../images/clock.png';
 const AddNote = props => {
   const editId = props.route.params?.id;
@@ -99,14 +100,9 @@ const AddNote = props => {
     );
   };
 
-  const onChange = (event, date) => {
-    const {
-      type,
-      nativeEvent: {timestamp, utcOffset},
-    } = event;
-    console.log(event, date);
-    setDate(date);
-    setOpenCalender(false);
+  const onChange = event => {
+    setDate(event);
+    // setOpenCalender(false);
   };
 
   function unixTime(time) {
@@ -140,16 +136,7 @@ const AddNote = props => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      {openCalender && (
-        <RNDateTimePicker
-          mode="time"
-          value={date}
-          onChange={onChange}
-          // timeZoneOffsetInSeconds={3600}
-          // imeZoneOffsetInMinutes={60}
-          // dateFormat="dayofweek day month"
-        />
-      )}
+
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={{...styles.backgroundStyle}}>
@@ -177,7 +164,9 @@ const AddNote = props => {
             alignItems: 'center',
             marginBottom: 40,
           }}>
-          <Text style={{color: colors.text}}>{unixTime(date).toString()}</Text>
+          <Text style={{color: colors.text}}>
+            {new Date(date).toLocaleString()}
+          </Text>
           <Pressable onPress={() => setOpenCalender(true)}>
             <Image
               source={clock}
@@ -188,6 +177,31 @@ const AddNote = props => {
             </Text>
           </Pressable>
         </View>
+        {openCalender && (
+          <>
+            <DatePicker
+              mode="datetime"
+              date={date}
+              onDateChange={onChange}
+              confirmText="Confirm"
+            />
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-evenly',
+                marginBottom: 30,
+              }}>
+              <CustomButton
+                title={'confirm'}
+                onButtonClick={() => setOpenCalender(false)}
+              />
+              <CustomButton
+                title={'cancel'}
+                onButtonClick={() => setOpenCalender(false)}
+              />
+            </View>
+          </>
+        )}
         <CustomButton
           title={'Add'}
           disabled={!title || !desc}

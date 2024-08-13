@@ -44,13 +44,10 @@ const Home = props => {
       <StatusBar barStyle={isDarkMode ? Colors.darker : Colors.lighter} />
 
       <Header />
-      <Pressable
-        onPress={onClickAdd}
-        style={{
-          borderBottomWidth: 0.5,
-          borderColor: isDarkMode ? 'white' : 'grey',
-        }}>
-        <Text style={{...styles.row, color: colors.text}}>Add New +</Text>
+      <Pressable onPress={onClickAdd}>
+        <Text style={{...styles.row, color: colors.text, textAlign: 'right'}}>
+          Add New +
+        </Text>
       </Pressable>
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -70,6 +67,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: 'black',
     fontWeight: '500',
+    textDecorationLine: 'underline',
   },
   backgroundStyle: {
     flex: 1,
