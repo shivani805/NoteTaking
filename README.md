@@ -19,9 +19,20 @@ Async storage- @react-native-async-storage/async-storage
 To run this app
 
 1. clone this repo
-   (note : node version should be >=18) 
-2. npm install
-3. npm run android (your build will start and open the application on your phone)
+2. node version should be >=18
+3. npm install
+4. npm run android (your build will start and open the application on your phone)
 
+# Screens
+1. Add Note
+2. View Note Details
+3. Edit Note
+
+# Features
+1. Delete (by clicking delete icon)
+2. Search (by date, by text)
+3. Set Reminder Date
+4. Edit Existing notes
+5. sync changes online/offline 
 
    
