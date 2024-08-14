@@ -7,9 +7,12 @@ Notes taking App and can set reminder to remind you about your notes... A Notifi
 #Packeges or dependencies added
 
 
-React native Push notification :  react-native-push-notification
+React native Push notification :  react-native-push-notification̨
+
 react-redux
+
 React Navigation
+
 Async storage- @react-native-async-storage/async-storage
 
 # Getting Started 
