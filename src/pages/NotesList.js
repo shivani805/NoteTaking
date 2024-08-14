@@ -87,7 +87,7 @@ const NotesList = props => {
           {item.description}
         </Text>
         <Text style={styles.timestamp}>
-          {new Date(item?.reminder).toLocaleTimeString()}
+          {new Date(item?.reminder).toLocaleString()}
         </Text>
       </TouchableOpacity>
     );
