@@ -33,6 +33,7 @@ To run this app
 2. Search (by date, by text)
 3. Set Reminder Date
 4. Edit Existing notes
-5. sync changes online/offline 
+5. sync changes online/offline
+6. Display Notification
 
    
