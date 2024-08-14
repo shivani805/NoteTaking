@@ -5,6 +5,6 @@ To run this app
 
 1. clone this repo
 2. npm install
-3. npm run android (your build will start and open the application on phone)
+3. npm run android (your build will start and open the application on your phone)
 
    
