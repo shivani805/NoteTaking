@@ -34,6 +34,6 @@ To run this app
 3. Set Reminder Date
 4. Edit Existing notes
 5. sync changes online/offline
-6. Display Notification
+6. Push Notification
 
    
